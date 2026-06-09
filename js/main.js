@@ -1,3 +1,5 @@
+import { explainIdea, scoreIdea } from './scoring.mjs';
+
 const CONFIG = {
   slug: 'content-pulse',
   title: 'Content Pulse',
@@ -140,9 +142,12 @@ function normalize(item = {}) {
 }
 
 function priority(item) {
-  const publishBoost = Math.max(0, 4 - Math.max(daysFromToday(item.publishDate), 0)) * 4;
-  const stateBoost = item.state === 'Scheduled' ? 10 : item.state === 'Promising' ? 6 : item.state === 'Published' ? 3 : 1;
-  return item.score * 6 + item.channelFit * 5 + publishBoost + stateBoost - item.effort * 4;
+  return scoreIdea(item, { today: todayISO() }).priority;
+}
+
+function scoreSummary(item) {
+  const result = explainIdea(item, { today: todayISO() });
+  return { tier: result.tier, summary: result.summary };
 }
 
 function seedState() {
@@ -385,11 +390,13 @@ function renderEditor(item) {
     return;
   }
 
+  const breakdown = scoreSummary(item);
   refs.editor.innerHTML = `
     <div class="editor-head">
       <div>
-        <p class="eyebrow">Idea editor</p>
+        <p class="eyebrow">Idea editor · ${breakdown.tier} bet</p>
         <h3>${item.title}</h3>
+        <p class="helper">Why it scores this way: ${breakdown.summary}.</p>
       </div>
       <span class="score">Priority ${priority(item)}</span>
     </div>
