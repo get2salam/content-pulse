@@ -54,6 +54,18 @@ Then open <http://localhost:8000>.
 }
 ```
 
+## Local verification
+
+A dependency-free Node script confirms `index.html`, `js/main.js`, and the README stay in sync before you push.
+
+```bash
+node scripts/verify.mjs
+# or
+npm test
+```
+
+It catches the common silent breakages: a `data-role` or `data-field` selector renamed in `main.js` but not in `index.html`, a moved stylesheet or script asset, and a stale JSON example in this README. The same script runs in CI on every push and pull request.
+
 ## Privacy
 
 Everything stays in your browser unless you export a JSON backup.

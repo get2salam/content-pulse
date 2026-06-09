@@ -1,0 +1,13 @@
+{
+  "name": "content-pulse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plan, score, and evolve content ideas that actually support the business.",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "verify": "node scripts/verify.mjs",
+    "test": "npm run verify"
+  },
+  "license": "MIT"
+}
