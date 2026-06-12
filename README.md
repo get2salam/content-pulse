@@ -54,6 +54,27 @@ Then open <http://localhost:8000>.
 }
 ```
 
+## Runnable scoring example
+
+Use the sample scoring walkthrough to see how Content Pulse converts a few ideas into a ranked publishing queue without opening the browser:
+
+```bash
+npm run example:score
+```
+
+Example output:
+
+```text
+Content Pulse sample ranking for 2026-06-09
+rank | priority | tier   | idea
+-----|----------|--------|-------------------------
+   1 |      107 | top    | Launch teardown thread (strong leverage, great channel fit, publishes this week, already scheduled)
+   2 |       72 | strong | Customer interview clips (great channel fit)
+   3 |       36 | moderate | Founder note draft (high friction)
+```
+
+The example uses `scripts/example-score.mjs` and the same `js/scoring.mjs` module as the app, so scoring-model changes are easy to review from the command line.
+
 ## Local verification
 
 A dependency-free Node script confirms `index.html`, `js/main.js`, and the README stay in sync before you push.

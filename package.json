@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8000",
+    "example:score": "node scripts/example-score.mjs",
     "verify": "node scripts/verify.mjs",
     "test:scoring": "node --test scripts/scoring.test.mjs",
     "test": "npm run verify && npm run test:scoring"
