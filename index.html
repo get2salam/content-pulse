@@ -9,6 +9,8 @@
   </head>
   <body style="--primary:#f472b6;--secondary:#fb7185;--panel:#190d18;--edge:#572347;--glow:rgba(244, 114, 182, 0.22)">
     <div class="shell">
+      <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-role="live-region"></div>
+
       <header class="topbar">
         <div>
           <p class="eyebrow">Content strategy workspace</p>
@@ -16,9 +18,9 @@
           <p class="lede">Turn scattered ideas into a real publishing system with ranked concepts, channel fit, and a cleaner queue for what should go live next.</p>
         </div>
         <div class="actions">
-          <button class="btn" data-action="import">Import</button>
-          <button class="btn" data-action="export">Export</button>
-          <button class="btn btn-primary" data-action="new">New idea</button>
+          <button class="btn" type="button" data-action="import">Import</button>
+          <button class="btn" type="button" data-action="export">Export</button>
+          <button class="btn btn-primary" type="button" data-action="new">New idea</button>
           <input id="import-file" type="file" accept=".json,application/json" hidden />
         </div>
       </header>

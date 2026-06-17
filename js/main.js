@@ -66,14 +66,26 @@ const refs = {
   category: document.querySelector('[data-field="category"]'),
   status: document.querySelector('[data-field="status"]'),
   importFile: document.querySelector('#import-file'),
+  liveRegion: document.querySelector('[data-role="live-region"]'),
 };
 
 const toastHost = (() => {
   const host = document.createElement('div');
   host.className = 'toast-host';
+  host.setAttribute('role', 'status');
+  host.setAttribute('aria-live', 'polite');
+  host.setAttribute('aria-atomic', 'true');
   document.body.appendChild(host);
   return host;
 })();
+
+function announce(message) {
+  if (!refs.liveRegion) return;
+  refs.liveRegion.textContent = '';
+  requestAnimationFrame(() => {
+    refs.liveRegion.textContent = message;
+  });
+}
 
 function showToast(message) {
   const node = document.createElement('div');
@@ -150,6 +162,16 @@ function scoreSummary(item) {
   return { tier: result.tier, summary: result.summary };
 }
 
+function itemAnnouncement(item) {
+  const breakdown = scoreSummary(item);
+  return `${item.title}. Priority ${priority(item)}, ${breakdown.tier} bet. ${item.state} for ${formatDate(item.publishDate)} on ${item.channel}. ${breakdown.summary}.`;
+}
+
+function announceFilterResults() {
+  const count = filteredItems().length;
+  announce(`${count} ${count === 1 ? 'idea matches' : 'ideas match'} the current filters.`);
+}
+
 function seedState() {
   return {
     boardTitle: CONFIG.boardTitle,
@@ -220,6 +242,7 @@ function addItem() {
     ui: { ...state.ui, selectedId: item.id },
   });
   showToast('Added a new content idea.');
+  announce(`Added ${itemAnnouncement(item)}`);
 }
 
 function removeSelected() {
@@ -232,6 +255,7 @@ function removeSelected() {
     ui: { ...state.ui, selectedId: nextItems[0]?.id || null },
   });
   showToast('Removed content idea.');
+  announce(`Removed ${target.title}. ${nextItems.length} ${nextItems.length === 1 ? 'idea remains' : 'ideas remain'} on the board.`);
 }
 
 function exportState() {
@@ -255,6 +279,7 @@ async function importState(file) {
     ui: { ...seedState().ui, ...(parsed.ui || {}) },
   });
   showToast('Imported backup.');
+  announce(`Imported backup with ${state.items.length} ${state.items.length === 1 ? 'idea' : 'ideas'}.`);
 }
 
 function scheduleSoon() {
@@ -265,6 +290,7 @@ function scheduleSoon() {
     items: state.items.map((item) => item.id === target.id ? { ...item, state: 'Scheduled', publishDate: bumpDate(todayISO(), 2) } : item),
   });
   showToast('Moved this idea into the publishing queue.');
+  announce(`Scheduled ${target.title} soon. ${itemAnnouncement(selectedItem())}`);
 }
 
 function markPublished() {
@@ -275,6 +301,7 @@ function markPublished() {
     items: state.items.map((item) => item.id === target.id ? { ...item, state: 'Published', publishDate: todayISO() } : item),
   });
   showToast('Marked this idea as published.');
+  announce(`Marked ${target.title} as published today.`);
 }
 
 async function copyHook() {
@@ -358,7 +385,7 @@ function renderList(items) {
   }
 
   refs.list.innerHTML = items.map((item) => `
-    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${item.id}">
+    <button class="item ${item.id === state.ui.selectedId ? 'is-selected' : ''}" type="button" data-id="${item.id}" aria-current="${item.id === state.ui.selectedId ? 'true' : 'false'}" aria-label="${escapeHtml(itemAnnouncement(item))}">
       <div class="item-top">
         <strong>${item.title}</strong>
         <span class="score">${priority(item)}</span>
@@ -525,6 +552,8 @@ document.addEventListener('click', (event) => {
   const itemButton = event.target.closest('.item');
   if (itemButton) {
     commit({ ...state, ui: { ...state.ui, selectedId: itemButton.dataset.id } });
+    const item = selectedItem();
+    if (item) announce(`Selected ${itemAnnouncement(item)}`);
     return;
   }
 
@@ -544,6 +573,7 @@ document.addEventListener('input', (event) => {
   const field = event.target.dataset.field;
   if (field === 'search') {
     commit({ ...state, ui: { ...state.ui, search: event.target.value } });
+    announceFilterResults();
     return;
   }
   const itemField = event.target.dataset.itemField;
@@ -554,6 +584,7 @@ document.addEventListener('change', async (event) => {
   const field = event.target.dataset.field;
   if (field === 'category' || field === 'status') {
     commit({ ...state, ui: { ...state.ui, [field]: event.target.value } });
+    announceFilterResults();
     return;
   }
   if (event.target.id === 'import-file') {
