@@ -7,9 +7,11 @@
   "scripts": {
     "start": "python3 -m http.server 8000",
     "example:score": "node scripts/example-score.mjs",
+    "validate:board": "node scripts/validate-board.mjs",
     "verify": "node scripts/verify.mjs",
     "test:scoring": "node --test scripts/scoring.test.mjs",
-    "test": "npm run verify && npm run test:scoring"
+    "test:board": "node --test scripts/validate-board.test.mjs",
+    "test": "npm run verify && npm run test:scoring && npm run test:board"
   },
   "license": "MIT"
 }

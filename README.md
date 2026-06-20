@@ -75,6 +75,24 @@ rank | priority | tier   | idea
 
 The example uses `scripts/example-score.mjs` and the same `js/scoring.mjs` module as the app, so scoring-model changes are easy to review from the command line.
 
+## Validate a backup before import
+
+Before sharing or re-importing a browser export, run the backup validator against the JSON file. It checks the board shape, required idea fields, 0-10 scoring ranges, and ISO publish dates, then prints the current top idea using the same scoring module as the app.
+
+```bash
+CONTENT_PULSE_TODAY=2026-06-09 npm run validate:board -- ./content-pulse.json
+```
+
+Successful output looks like:
+
+```text
+Valid Content Pulse backup: ./content-pulse.json
+ideas: 3
+top idea: Launch teardown thread (top, priority 107)
+```
+
+If an import is malformed, the command exits non-zero and lists the exact field paths to fix, such as `items[0].publishDate must use YYYY-MM-DD`.
+
 ## Local verification
 
 A dependency-free Node script confirms `index.html`, `js/main.js`, and the README stay in sync before you push.
