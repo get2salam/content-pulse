@@ -20,7 +20,7 @@
         <div class="actions">
           <button class="btn" type="button" data-action="import">Import</button>
           <button class="btn" type="button" data-action="export">Export</button>
-          <button class="btn btn-primary" type="button" data-action="new">New idea</button>
+          <button class="btn btn-primary" type="button" data-action="new" aria-keyshortcuts="n">New idea</button>
           <input id="import-file" type="file" accept=".json,application/json" hidden />
         </div>
       </header>
@@ -34,13 +34,13 @@
         <p class="accent">Score ideas by leverage, channel fit, and publish timing so content actually compounds instead of just filling a calendar.</p>
       </section>
 
-      <section class="stats" data-role="stats"></section>
-      <section class="insights" data-role="insights"></section>
+      <section class="stats" data-role="stats" aria-label="Board statistics"></section>
+      <section class="insights" data-role="insights" aria-label="Content insights"></section>
 
-      <section class="controls card">
+      <section class="controls card" aria-label="Filter controls">
         <label>
           <span>Search</span>
-          <input type="search" data-field="search" placeholder="Search ideas, hooks, and channels..." />
+          <input type="search" data-field="search" placeholder="Search ideas, hooks, and channels..." aria-keyshortcuts="/" />
         </label>
         <label>
           <span>Idea type</span>
@@ -53,7 +53,7 @@
         <button class="btn" type="button" data-action="reset">Re-seed sample</button>
       </section>
 
-      <section class="workspace">
+      <section class="workspace" aria-label="Idea workspace">
         <article class="card list-panel">
           <div class="panel-head">
             <div>
@@ -62,12 +62,12 @@
             </div>
             <span class="chip" data-role="count"></span>
           </div>
-          <div class="list" data-role="list"></div>
+          <div class="list" data-role="list" role="list" aria-label="Content ideas"></div>
         </article>
-        <article class="card editor-panel" data-role="editor"></article>
+        <article class="card editor-panel" data-role="editor" aria-label="Idea editor"></article>
       </section>
 
-      <section class="secondary">
+      <section class="secondary" aria-label="Publishing queue and content mix">
         <article class="card secondary-panel" data-role="secondary-primary"></article>
         <article class="card secondary-panel" data-role="secondary-secondary"></article>
       </section>

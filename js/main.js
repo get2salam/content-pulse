@@ -243,6 +243,10 @@ function addItem() {
   });
   showToast('Added a new content idea.');
   announce(`Added ${itemAnnouncement(item)}`);
+  requestAnimationFrame(() => {
+    const titleInput = refs.editor.querySelector('[data-item-field="title"]');
+    if (titleInput) { titleInput.focus(); titleInput.select(); }
+  });
 }
 
 function removeSelected() {
@@ -256,6 +260,11 @@ function removeSelected() {
   });
   showToast('Removed content idea.');
   announce(`Removed ${target.title}. ${nextItems.length} ${nextItems.length === 1 ? 'idea remains' : 'ideas remain'} on the board.`);
+  requestAnimationFrame(() => {
+    const firstItem = refs.list.querySelector('.item');
+    if (firstItem) firstItem.focus();
+    else document.querySelector('[data-action="new"]')?.focus();
+  });
 }
 
 function exportState() {
@@ -577,7 +586,17 @@ document.addEventListener('input', (event) => {
     return;
   }
   const itemField = event.target.dataset.itemField;
-  if (itemField) updateSelected(itemField, event.target.value);
+  if (itemField) {
+    // Range sliders commit on `change` (pointer release) so a full re-render
+    // does not interrupt the drag gesture. Update only the sibling <output>
+    // for live visual feedback while dragging.
+    if (event.target.type === 'range') {
+      const output = event.target.closest('.field')?.querySelector('output');
+      if (output) output.textContent = `${event.target.value} / 10`;
+      return;
+    }
+    updateSelected(itemField, event.target.value);
+  }
 });
 
 document.addEventListener('change', async (event) => {
@@ -585,6 +604,12 @@ document.addEventListener('change', async (event) => {
   if (field === 'category' || field === 'status') {
     commit({ ...state, ui: { ...state.ui, [field]: event.target.value } });
     announceFilterResults();
+    return;
+  }
+  // Commit range slider values on release so the re-render happens only once.
+  const itemField = event.target.dataset.itemField;
+  if (itemField && event.target.type === 'range') {
+    updateSelected(itemField, event.target.value);
     return;
   }
   if (event.target.id === 'import-file') {
